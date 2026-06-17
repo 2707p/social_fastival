@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>설탕세 정책 시뮬레이터</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --border: #E2DDD6;
+    --text: #1A1714;
+    --sub: #6B6560;
+    --accent: #C85A2B;
+    --accent-light: #F4E8E1;
+    --green: #2B7A4B;
+    --green-light: #E1F0E8;
+    --blue: #1D5FA8;
+    --blue-light: #E3EDF8;
+    --warn: #B8860B;
+    --warn-light: #FDF5DC;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  header {
+    background: var(--text);
+    color: white;
+    padding: 28px 32px 24px;
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  header p {
+    font-size: 13px;
+    color: #9A9490;
+    font-weight: 300;
+  }
+
+  .basis-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 11px;
+    color: #9A9490;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .basis-badge span { color: #C8C4BF; }
+
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 28px 20px 0;
+  }
+
+  /* 입력 패널 */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .panel-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--sub);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .input-row {
+    margin-bottom: 22px;
+  }
+
+  .input-row:last-child { margin-bottom: 0; }
+
+  .input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .input-name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .input-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .input-desc {
+    font-size: 11px;
+    color: var(--sub);
+    margin-top: 2px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    margin: 10px 0 4px;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--sub);
+  }
+
+  /* 음료 선택 */
+  .beverage-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .bev-btn {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .bev-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .bev-btn.active {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .bev-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .bev-name { font-size: 11px; color: var(--text); font-weight: 500; display: block; }
+  .bev-price { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--sub); display: block; margin-top: 2px; }
+
+  /* 결과 */
+  .results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+
+  .result-card.highlight {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .result-card.green {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+
+  .result-card.blue {
+    border-color: var(--blue);
+    background: var(--blue-light);
+  }
+
+  .result-card.warn {
+    border-color: var(--warn);
+    background: var(--warn-light);
+  }
+
+  .result-label {
+    font-size: 11px;
+    color: var(--sub);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .result-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .result-card.highlight .result-value { color: var(--accent); }
+  .result-card.green .result-value { color: var(--green); }
+  .result-card.blue .result-value { color: var(--blue); }
+  .result-card.warn .result-value { color: var(--warn); }
+
+  .result-sub {
+    font-size: 11px;
+    color: var(--sub);
+    margin-top: 6px;
+  }
+
+  /* 세후 가격 표시 */
+  .price-change {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .price-before {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--sub);
+    text-decoration: line-through;
+  }
+
+  .price-arrow {
+    font-size: 14px;
+    color: var(--sub);
+  }
+
+  .price-after {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .price-diff {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: var(--accent-light);
+    border-radius: 4px;
+    padding: 3px 8px;
+  }
+
+  .price-label {
+    font-size: 11px;
+    color: var(--sub);
+    margin-left: auto;
+  }
+
+  /* 소비 감소 바 */
+  .decline-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+
+  .bar-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .bar-label-row span:first-child { font-weight: 500; }
+  .bar-label-row span:last-child {
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .bar-track {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    border-radius: 5px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .bar-note {
+    font-size: 11px;
+    color: var(--sub);
+  }
+
+  /* 논문 근거 */
+  .ref-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+
+  .ref-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .ref-item {
+    font-size: 12px;
+    color: var(--sub);
+    line-height: 1.6;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ref-item:last-child { border-bottom: none; }
+
+  .ref-item strong { color: var(--text); }
+
+  /* 보고서 문장 */
+  .report-box {
+    background: #1A1714;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .report-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .report-text {
+    font-size: 13px;
+    color: #E8E4DF;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .report-text em {
+    color: #F4C89A;
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 7px 14px;
+    color: #9A9490;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { background: rgba(255,255,255,0.14); color: white; }
+
+  /* 경고 */
+  .caution {
+    background: var(--warn-light);
+    border: 1px solid #D4A017;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 11px;
+    color: #7A5C00;
+    line-height: 1.6;
+  }
+
+  .caution strong { color: #5A4200; }
+
+  /* 모바일 */
+  @media (max-width: 420px) {
+    .results { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .result-value { font-size: 20px; }
+    .beverage-grid { grid-template-columns: repeat(3,1fr); gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">Policy Simulation Tool</div>
+  <h1>설탕세 정책 시뮬레이터</h1>
+  <p>세율·음료를 조정하면 소비 감소·세수 효과를 즉시 계산합니다</p>
+  <div class="basis-badge">
+    📄 <span>근거: Powell et al. (2013), WHO SSB 탄력성 추정치 기반 단순화 모델</span>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- 입력 1: 음료 선택 -->
+  <div class="panel">
+    <div class="panel-label">Step 1 — 과세 대상 음료 선택</div>
+    <div class="beverage-grid" id="bevGrid">
+      <div class="bev-btn active" data-price="1800" data-sugar="27" onclick="selectBev(this)">
+        <span class="bev-icon">🥤</span>
+        <span class="bev-name">탄산음료</span>
+        <span class="bev-price">₩1,800</span>
+      </div>
+      <div class="bev-btn" data-price="2000" data-sugar="25" onclick="selectBev(this)">
+        <span class="bev-icon">🧃</span>
+        <span class="bev-name">과일음료</span>
+        <span class="bev-price">₩2,000</span>
+      </div>
+      <div class="bev-btn" data-price="2500" data-sugar="39" onclick="selectBev(this)">
+        <span class="bev-icon">⚡</span>
+        <span class="bev-name">에너지드링크</span>
+        <span class="bev-price">₩2,500</span>
+      </div>
+      <div class="bev-btn" data-price="3500" data-sugar="50" onclick="selectBev(this)">
+        <span class="bev-icon">☕</span>
+        <span class="bev-name">가당커피음료</span>
+        <span class="bev-price">₩3,500</span>
+      </div>
+      <div class="bev-btn" data-price="1500" data-sugar="18" onclick="selectBev(this)">
+        <span class="bev-icon">🍵</span>
+        <span class="bev-name">가당차음료</span>
+        <span class="bev-price">₩1,500</span>
+      </div>
+      <div class="bev-btn" data-price="2200" data-sugar="22" onclick="selectBev(this)">
+        <span class="bev-icon">🥛</span>
+        <span class="bev-name">가당유음료</span>
+        <span class="bev-price">₩2,200</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 입력 2: 세율 -->
+  <div class="panel">
+    <div class="panel-label">Step 2 — 설탕세율 설정</div>
+    <div class="input-row">
+      <div class="input-header">
+        <div>
+          <div class="input-name">설탕세율</div>
+          <div class="input-desc">가격 대비 세금 비율 (종가세 방식)</div>
+        </div>
+        <div class="input-value" id="taxRateVal">10%</div>
+      </div>
+      <input type="range" id="taxRate" min="0" max="50" value="10" step="1" oninput="simulate()">
+      <div class="range-labels"><span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%</span></div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-header">
+        <div>
+          <div class="input-name">연간 시장 규모</div>
+          <div class="input-desc">과세 대상 음료의 국내 연간 판매량 기준</div>
+        </div>
+        <div class="input-value" id="marketVal">5억 캔</div>
+      </div>
+      <input type="range" id="marketSize" min="1" max="20" value="5" step="1" oninput="simulate()">
+      <div class="range-labels"><span>1억</span><span>5억</span><span>10억</span><span>15억</span><span>20억</span></div>
+    </div>
+  </div>
+
+  <!-- 세후 가격 -->
+  <div class="price-change" id="priceChangeRow">
+    <div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:4px;">현재 가격</div>
+      <div class="price-before" id="priceBeforeEl">₩1,800</div>
+    </div>
+    <div class="price-arrow">→</div>
+    <div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:4px;">세후 가격</div>
+      <div class="price-after" id="priceAfterEl">₩1,980</div>
+    </div>
+    <div class="price-diff" id="priceDiffEl">+₩180</div>
+    <div class="price-label" id="priceLabel">+10.0%</div>
+  </div>
+
+  <!-- 소비 감소 바 -->
+  <div class="decline-bar-wrap">
+    <div class="bar-label-row">
+      <span>예상 소비 감소율</span>
+      <span id="declineText">-5.2%</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" id="declineBar" style="width:10.4%"></div>
+    </div>
+    <div class="bar-note" id="barNote">가격탄력성 −0.52 적용 (Powell et al., 2013 기준)</div>
+  </div>
+
+  <!-- 결과 카드 -->
+  <div class="results">
+    <div class="result-card highlight">
+      <div class="result-label">예상 소비 감소량</div>
+      <div class="result-value" id="resDeclineAbs">2,600<span style="font-size:14px">만 캔</span></div>
+      <div class="result-sub" id="resDeclineSub">연간 기준 추정</div>
+    </div>
+    <div class="result-card green">
+      <div class="result-label">예상 연간 세수</div>
+      <div class="result-value" id="resTax">약 <span id="resTaxNum">842</span><span style="font-size:14px">억원</span></div>
+      <div class="result-sub" id="resTaxSub">소비 감소 반영 후</div>
+    </div>
+    <div class="result-card blue">
+      <div class="result-label">1인당 당 섭취 감소</div>
+      <div class="result-value" id="resSugar">약 <span id="resSugarNum">2.3</span><span style="font-size:14px">g/일</span></div>
+      <div class="result-sub">인구 5,100만명 기준</div>
+    </div>
+    <div class="result-card warn">
+      <div class="result-label">효과 신뢰 등급</div>
+      <div class="result-value" id="resGrade">B</div>
+      <div class="result-sub" id="resGradeSub">중간 범위 세율</div>
+    </div>
+  </div>
+
+  <!-- 논문 근거 -->
+  <div class="ref-box">
+    <div class="ref-title">📚 모델 근거 (실제 연구)</div>
+    <div class="ref-item">
+      <strong>Powell et al. (2013)</strong> — 미국 SSB 가격탄력성 <strong>−0.52 ~ −0.79</strong> 추정
+      <br><em style="color:var(--sub)">청소년 탄력성은 성인보다 약 1.3배 높은 경향</em>
+    </div>
+    <div class="ref-item">
+      <strong>WHO (2016)</strong> — SSB에 <strong>20% 이상</strong> 과세 시 소비 감소 효과 유의미
+    </div>
+    <div class="ref-item">
+      <strong>영국 SDIL (2018)</strong> — 시행 후 과세 음료 판매량 <strong>약 29%</strong> 감소 보고
+    </div>
+    <div class="ref-item">
+      <strong>멕시코 설탕세 (2014)</strong> — 10% 세율 적용, 소비 <strong>평균 6~8%</strong> 감소
+    </div>
+  </div>
+
+  <!-- 보고서 문장 생성 -->
+  <div class="report-box">
+    <div class="report-title">✍️ 보고서 활용 문장 (자동 생성)</div>
+    <div class="report-text" id="reportText">
+      본 시뮬레이션에서 <em>설탕세율 10%</em>를 탄산음료(기준가 ₩1,800)에 적용한 결과,
+      세후 소비자 가격은 <em>₩1,980</em>으로 상승하였다.
+      Powell et al.(2013)의 가격탄력성 추정치(−0.52)를 적용하면
+      연간 소비량은 약 <em>2,600만 캔(-5.2%)</em> 감소하고,
+      세수는 <em>약 842억원</em>으로 추정된다.
+      단, 본 수치는 단순 선형 모델 기반 추정이며 대체재 전환·소득 효과는 반영하지 않았다.
+    </div>
+    <button class="copy-btn" onclick="copyReport()">📋 복사하기</button>
+  </div>
+
+  <!-- 주의사항 -->
+  <div class="caution">
+    <strong>⚠️ 모델 한계 안내</strong><br>
+    이 시뮬레이터는 단순 선형 가격탄력성 모델(탄력성 고정값 적용)을 사용합니다.
+    실제 효과는 대체재 전환, 소득 수준, 소비자 인식, 공급자 전가율에 따라 달라질 수 있으며
+    한국 음료 시장 특성이 완전히 반영되지 않았습니다.
+    보고서 작성 시 이 한계를 명시하길 권장합니다.
+  </div>
+
+</div>
+
+<script>
+// 탄력성 데이터 (논문 기반, 보수적 추정)
+const ELASTICITY = {
+  탄산음료: -0.52,
+  과일음료: -0.48,
+  에너지드링크: -0.61,
+  가당커피음료: -0.38,
+  가당차음료: -0.45,
+  가당유음료: -0.30
+};
+
+const BEV_NAMES = ['탄산음료','과일음료','에너지드링크','가당커피음료','가당차음료','가당유음료'];
+
+let currentBev = {
+  name: '탄산음료',
+  price: 1800,
+  sugar: 27
+};
+
+function selectBev(el) {
+  document.querySelectorAll('.bev-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const nameEl = el.querySelector('.bev-name');
+  currentBev = {
+    name: nameEl.textContent,
+    price: parseInt(el.dataset.price),
+    sugar: parseInt(el.dataset.sugar)
+  };
+  simulate();
+}
+
+function simulate() {
+  const taxRate = parseInt(document.getElementById('taxRate').value) / 100;
+  const marketSize = parseInt(document.getElementById('marketSize').value) * 1e8; // 단위: 캔
+
+  const price = currentBev.price;
+  const taxedPrice = Math.round(price * (1 + taxRate));
+  const priceDiff = taxedPrice - price;
+  const pricePct = (taxRate * 100).toFixed(1);
+
+  // 탄력성
+  const elas = ELASTICITY[currentBev.name] || -0.52;
+  const declineRate = Math.abs(elas * taxRate); // 소비 감소율 (양수)
+  const declineRatePct = (declineRate * 100).toFixed(1);
+
+  // 소비 감소량
+  const declineAbs = Math.round(marketSize * declineRate / 1e4) ; // 만 캔
+  const remainConsumption = marketSize * (1 - declineRate);
+
+  // 세수 = 세후 소비량 × 단위당 세금
+  const taxPerUnit = price * taxRate;
+  const taxRevenue = Math.round(remainConsumption * taxPerUnit / 1e8); // 억원
+
+  // 1인당 당 감소 (g/일)
+  // 음료 1캔 기준 당 함량 × 감소 캔수 / 인구 / 365
+  const sugarDecreasePerDay = (marketSize * declineRate * currentBev.sugar) / (5.1e7 * 365);
+  const sugarDisplay = sugarDecreasePerDay.toFixed(1);
+
+  // 신뢰 등급
+  let grade, gradeSub;
+  if (taxRate < 0.05) { grade = 'D'; gradeSub = '낮은 세율, 효과 불명확'; }
+  else if (taxRate < 0.10) { grade = 'C'; gradeSub = '약한 효과 기대'; }
+  else if (taxRate < 0.20) { grade = 'B'; gradeSub = '중간 범위 세율'; }
+  else if (taxRate < 0.30) { grade = 'A'; gradeSub = 'WHO 권고 수준'; }
+  else { grade = 'A+'; gradeSub = '강한 효과, 역진세 우려'; }
+
+  // 표시
+  document.getElementById('taxRateVal').textContent = (taxRate*100).toFixed(0) + '%';
+  document.getElementById('marketVal').textContent = parseInt(document.getElementById('marketSize').value) + '억 캔';
+
+  document.getElementById('priceBeforeEl').textContent = '₩' + price.toLocaleString();
+  document.getElementById('priceAfterEl').textContent = '₩' + taxedPrice.toLocaleString();
+  document.getElementById('priceDiffEl').textContent = '+₩' + priceDiff.toLocaleString();
+  document.getElementById('priceLabel').textContent = '+' + pricePct + '%';
+
+  document.getElementById('declineText').textContent = '-' + declineRatePct + '%';
+  document.getElementById('declineBar').style.width = Math.min(declineRate * 2 * 100, 100) + '%';
+  document.getElementById('barNote').textContent =
+    '가격탄력성 ' + elas.toFixed(2) + ' 적용 (' + currentBev.name + ' 기준, Powell et al. 2013)';
+
+  // 만 캔 단위로 보기 좋게
+  let declineDisplay;
+  if (declineAbs >= 10000) {
+    declineDisplay = (declineAbs/10000).toFixed(1) + '<span style="font-size:14px">억 캔</span>';
+  } else {
+    declineDisplay = declineAbs.toLocaleString() + '<span style="font-size:14px">만 캔</span>';
+  }
+  document.getElementById('resDeclineAbs').innerHTML = declineDisplay;
+  document.getElementById('resDeclineSub').textContent = '연간 기준, ' + declineRatePct + '% 감소';
+
+  document.getElementById('resTaxNum').textContent = taxRevenue.toLocaleString();
+  document.getElementById('resTaxSub').textContent = '소비 감소 반영 후 추정';
+
+  document.getElementById('resSugarNum').textContent = sugarDisplay;
+  document.getElementById('resGrade').textContent = grade;
+  document.getElementById('resGradeSub').textContent = gradeSub;
+
+  // 보고서 문장
+  const mkt = parseInt(document.getElementById('marketSize').value);
+  document.getElementById('reportText').innerHTML = `
+    본 시뮬레이션에서 <em>설탕세율 ${(taxRate*100).toFixed(0)}%</em>를 ${currentBev.name}(기준가 ₩${price.toLocaleString()})에 적용한 결과,
+    세후 소비자 가격은 <em>₩${taxedPrice.toLocaleString()}</em>으로 상승하였다.
+    Powell et al.(2013)의 가격탄력성 추정치(${elas})를 적용하면
+    연간 소비량은 약 <em>${declineRatePct}%</em> 감소하고,
+    예상 세수는 <em>약 ${taxRevenue.toLocaleString()}억원</em>으로 추정된다.
+    1인당 하루 당 섭취량은 약 <em>${sugarDisplay}g</em> 감소할 것으로 예측된다.
+    단, 본 수치는 단순 선형 모델 기반 추정이며 대체재 전환·소득 효과는 반영하지 않았다.
+  `;
+}
+
+function copyReport() {
+  const text = document.getElementById('reportText').innerText.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ 복사됨!';
+    setTimeout(() => { btn.textContent = '📋 복사하기'; }, 1800);
+  });
+}
+
+simulate();
+</script>
+</body>
+</html>
