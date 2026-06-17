@@ -346,38 +346,6 @@
     color: var(--sub);
   }
 
-  /* 논문 근거 */
-  .ref-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--blue);
-    border-radius: 0 6px 6px 0;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-  }
-
-  .ref-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--blue);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .ref-item {
-    font-size: 12px;
-    color: var(--sub);
-    line-height: 1.6;
-    padding: 4px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .ref-item:last-child { border-bottom: none; }
-
-  .ref-item strong { color: var(--text); }
-
   /* 보고서 문장 */
   .report-box {
     background: #1A1714;
@@ -464,10 +432,10 @@
   <div class="panel">
     <div class="panel-label">Step 1 — 과세 대상 음료 선택</div>
     <div class="beverage-grid" id="bevGrid">
-      <div class="bev-btn active" data-price="1800" data-sugar="27" onclick="selectBev(this)">
+      <div class="bev-btn active" data-price="2200" data-sugar="27" onclick="selectBev(this)">
         <span class="bev-icon">🥤</span>
         <span class="bev-name">탄산음료</span>
-        <span class="bev-price">₩1,800</span>
+        <span class="bev-price">₩2,200</span>
       </div>
       <div class="bev-btn" data-price="2000" data-sugar="25" onclick="selectBev(this)">
         <span class="bev-icon">🧃</span>
@@ -484,10 +452,10 @@
         <span class="bev-name">가당커피음료</span>
         <span class="bev-price">₩3,500</span>
       </div>
-      <div class="bev-btn" data-price="1500" data-sugar="18" onclick="selectBev(this)">
+      <div class="bev-btn" data-price="2600" data-sugar="18" onclick="selectBev(this)">
         <span class="bev-icon">🍵</span>
         <span class="bev-name">가당차음료</span>
-        <span class="bev-price">₩1,500</span>
+        <span class="bev-price">₩2,600</span>
       </div>
       <div class="bev-btn" data-price="2200" data-sugar="22" onclick="selectBev(this)">
         <span class="bev-icon">🥛</span>
@@ -529,14 +497,14 @@
   <div class="price-change" id="priceChangeRow">
     <div>
       <div style="font-size:11px;color:var(--sub);margin-bottom:4px;">현재 가격</div>
-      <div class="price-before" id="priceBeforeEl">₩1,800</div>
+      <div class="price-before" id="priceBeforeEl">₩2,200</div>
     </div>
     <div class="price-arrow">→</div>
     <div>
       <div style="font-size:11px;color:var(--sub);margin-bottom:4px;">세후 가격</div>
-      <div class="price-after" id="priceAfterEl">₩1,980</div>
+      <div class="price-after" id="priceAfterEl">₩2,420</div>
     </div>
-    <div class="price-diff" id="priceDiffEl">+₩180</div>
+    <div class="price-diff" id="priceDiffEl">+₩220</div>
     <div class="price-label" id="priceLabel">+10.0%</div>
   </div>
 
@@ -576,33 +544,16 @@
     </div>
   </div>
 
-  <!-- 논문 근거 -->
-  <div class="ref-box">
-    <div class="ref-title">📚 모델 근거 (실제 연구)</div>
-    <div class="ref-item">
-      <strong>Powell et al. (2013)</strong> — 미국 SSB 가격탄력성 <strong>−0.52 ~ −0.79</strong> 추정
-      <br><em style="color:var(--sub)">청소년 탄력성은 성인보다 약 1.3배 높은 경향</em>
-    </div>
-    <div class="ref-item">
-      <strong>WHO (2016)</strong> — SSB에 <strong>20% 이상</strong> 과세 시 소비 감소 효과 유의미
-    </div>
-    <div class="ref-item">
-      <strong>영국 SDIL (2018)</strong> — 시행 후 과세 음료 판매량 <strong>약 29%</strong> 감소 보고
-    </div>
-    <div class="ref-item">
-      <strong>멕시코 설탕세 (2014)</strong> — 10% 세율 적용, 소비 <strong>평균 6~8%</strong> 감소
-    </div>
-  </div>
-
-  <!-- 보고서 문장 생성 -->
+  <!-- 결론 -->
   <div class="report-box">
-    <div class="report-title">✍️ 보고서 활용 문장 (자동 생성)</div>
+    <div class="report-title">🧾 결론 (자동 생성)</div>
     <div class="report-text" id="reportText">
-      본 시뮬레이션에서 <em>설탕세율 10%</em>를 탄산음료(기준가 ₩1,800)에 적용한 결과,
-      세후 소비자 가격은 <em>₩1,980</em>으로 상승하였다.
+      본 시뮬레이션에서 <em>설탕세율 10%</em>를 탄산음료(기준가 ₩2,200)에 적용한 결과,
+      세후 소비자 가격은 <em>₩2,420</em>으로 상승하였다.
       Powell et al.(2013)의 가격탄력성 추정치(−0.52)를 적용하면
       연간 소비량은 약 <em>2,600만 캔(-5.2%)</em> 감소하고,
       세수는 <em>약 842억원</em>으로 추정된다.
+      이를 통해 설탕세는 소비 감소와 세수 확보를 동시에 달성할 수 있는 정책 수단으로 작용할 가능성이 있다고 결론지을 수 있다.
       단, 본 수치는 단순 선형 모델 기반 추정이며 대체재 전환·소득 효과는 반영하지 않았다.
     </div>
     <button class="copy-btn" onclick="copyReport()">📋 복사하기</button>
@@ -610,11 +561,9 @@
 
   <!-- 주의사항 -->
   <div class="caution">
-    <strong>⚠️ 모델 한계 안내</strong><br>
-    이 시뮬레이터는 단순 선형 가격탄력성 모델(탄력성 고정값 적용)을 사용합니다.
-    실제 효과는 대체재 전환, 소득 수준, 소비자 인식, 공급자 전가율에 따라 달라질 수 있으며
-    한국 음료 시장 특성이 완전히 반영되지 않았습니다.
-    보고서 작성 시 이 한계를 명시하길 권장합니다.
+    <strong>⚠️ 모델 근거 및 한계 안내</strong><br>
+    이 연구는 영국(SDIL, 2018)·멕시코(2014) 등 실제로 설탕세를 도입한 국가의 시행 사례와 Powell et al.(2013), WHO(2016) 등의 가격탄력성 추정치를 참고하여 측정하였으며,
+    단순 선형 탄력성 모델을 사용하여 대체재 전환·소득 수준·공급자 전가율 등 실제 변수는 반영하지 않은 추정치임을 밝힌다.
   </div>
 
 </div>
@@ -634,7 +583,7 @@ const BEV_NAMES = ['탄산음료','과일음료','에너지드링크','가당커
 
 let currentBev = {
   name: '탄산음료',
-  price: 1800,
+  price: 2200,
   sugar: 27
 };
 
@@ -716,7 +665,7 @@ function simulate() {
   document.getElementById('resGrade').textContent = grade;
   document.getElementById('resGradeSub').textContent = gradeSub;
 
-  // 보고서 문장
+  // 결론 문장
   const mkt = parseInt(document.getElementById('marketSize').value);
   document.getElementById('reportText').innerHTML = `
     본 시뮬레이션에서 <em>설탕세율 ${(taxRate*100).toFixed(0)}%</em>를 ${currentBev.name}(기준가 ₩${price.toLocaleString()})에 적용한 결과,
@@ -725,6 +674,7 @@ function simulate() {
     연간 소비량은 약 <em>${declineRatePct}%</em> 감소하고,
     예상 세수는 <em>약 ${taxRevenue.toLocaleString()}억원</em>으로 추정된다.
     1인당 하루 당 섭취량은 약 <em>${sugarDisplay}g</em> 감소할 것으로 예측된다.
+    이를 통해 설탕세는 소비 감소와 세수 확보를 동시에 달성할 수 있는 정책 수단으로 작용할 가능성이 있다고 결론지을 수 있다.
     단, 본 수치는 단순 선형 모델 기반 추정이며 대체재 전환·소득 효과는 반영하지 않았다.
   `;
 }
